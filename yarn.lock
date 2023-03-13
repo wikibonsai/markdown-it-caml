@@ -1600,10 +1600,10 @@ camelcase@^6.0.0, camelcase@^6.3.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.3.0.tgz#5685b95eb209ac9c0c177467778c9c84df58ba9a"
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
-caml-mkdn@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/caml-mkdn/-/caml-mkdn-0.0.1.tgz#c192b525bf13a3ed6c41854c1404d151a447a960"
-  integrity sha512-5IouiXqhKtCu5HzcIqzdMhLsxK3uSNnDs/+8bj95JOBnlw+u5xkm1xgxiHzpaorIxvxRlWyOYj/pQf/7j3TtfA==
+caml-mkdn@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/caml-mkdn/-/caml-mkdn-0.0.2.tgz#4bdd7d4c2625e8d62fe05ff200ed3a8f9aa45965"
+  integrity sha512-xe7ogLRSj209b1rP5bTsk4pLxgDQAkl/uqugo/48RVVjKN7aNlhVpXM60fCoaIsud29tbiJvI3GT6pC02wqRFA==
 
 caml-spec@^0.0.1:
   version "0.0.1"
@@ -2680,12 +2680,14 @@ map-obj@^4.1.0:
   resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-4.3.0.tgz#9304f906e93faae70880da102a9f1df0ea8bb05a"
   integrity sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==
 
-"markdown-it-wikirefs@file:../markdown-it-wikirefs":
-  version "0.0.1"
+markdown-it-wikirefs@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/markdown-it-wikirefs/-/markdown-it-wikirefs-0.0.2.tgz#11b946c691be5f62c0085d4b4ce12c8098fc55ba"
+  integrity sha512-8xHqW7ggO+poPQuoRrpT6C+t53O8AeIkghpLGC6NEsT//KUinZItNflNMra/l7/VybYsOuGMycgg1dHfbN5jJw==
   dependencies:
     lodash "^4.17.21"
     markdown-it "^12.3.2"
-    wikirefs "^0.0.1"
+    wikirefs "^0.0.2"
 
 markdown-it@^12.3.2:
   version "12.3.2"
@@ -3619,10 +3621,10 @@ which@^2.0.1:
   dependencies:
     isexe "^2.0.0"
 
-wikirefs@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/wikirefs/-/wikirefs-0.0.1.tgz#15914b9ecc986c17ed0c6ac0ce71c18359b207d8"
-  integrity sha512-O46dSbuZQdDi3SE9pB88UhwqtGAvbV0+j7zD95158xul9YceCrEX/dWsidTzfoW0oJkI7zFCkCOWE3YzUHGagQ==
+wikirefs@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/wikirefs/-/wikirefs-0.0.2.tgz#eb8bdb3506f6fe75f683198b9343e0228a5ed716"
+  integrity sha512-G57eZB6VcYmm8umCOYIkmfzX497EEbhtlPwP/qLI+vYYIp4POIlkA67VE+PrYMsVVf5YxQ+QukElAK9hE5VROQ==
   dependencies:
     escape-mkdn "^0.0.3"
 
