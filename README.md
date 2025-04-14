@@ -3,7 +3,7 @@
 [![A WikiBonsai Project](https://img.shields.io/badge/%F0%9F%8E%8B-A%20WikiBonsai%20Project-brightgreen)](https://github.com/wikibonsai/wikibonsai)
 [![NPM package](https://img.shields.io/npm/v/markdown-it-caml)](https://npmjs.org/package/markdown-it-caml)
 
-A markdown-it plugin to process [caml](https://github.com/wikibonsai/caml) -- Colon Attribute Markup Language.
+A markdown-it plugin to process [caml](https://github.com/wikibonsai/caml-mkdn) -- Colon Attribute Markup Language.
 
 Note that this plugin only parses the input -- it is up to you to handle and store metadata.
 
@@ -41,7 +41,7 @@ const caml_plugin = require('markdown-it-caml').default;
 
 ## Syntax
 
-For syntax specifications, see the [caml](https://github.com/wikibonsai/caml/tree/main/spec) repo.
+For syntax specifications, see the [caml-spec](https://github.com/wikibonsai/caml-mkdn/tree/main/spec) repo.
 
 ## Options
 
