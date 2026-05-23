@@ -254,19 +254,10 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
     } else {
       const key: string | null = token.attrGet('key');
       const valType: string | null = token.attrGet('type');
-      let strValue: string | null = token.attrGet('val');
-      // multi-line string
-      if (strValue?.includes('\n')) {
-        // const newlinesKeep: string = (strValue[0] === '|') ? '\n' : '';
-        // const chompKeep: string = (strValue[1] === '-') ? '\n' : '';
-        // const strArray: string[] = strValue.split('\n')
-        // strValue = strArray.map((line: string) => (line === '') ? '' : `<span>${line}</span>`).join(newlinesKeep).concat(chompKeep);
-      // single line
-      } else {
-        const keySlug: string = key ? key.trim().toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') : '';
-        strValue = `<span class="${opts.cssNames.attr} ${valType} ${keySlug}">${strValue}</span>`;
-      }
-      return `<dd>${strValue}</dd>\n`;
+      const strValue: string | null = token.attrGet('val');
+      const keySlug: string = key ? key.trim().toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') : '';
+      const rendered: string = `<span class="${opts.cssNames.attr} ${valType} ${keySlug}">${strValue}</span>`;
+      return `<dd>${rendered}</dd>\n`;
     }
   }
 
