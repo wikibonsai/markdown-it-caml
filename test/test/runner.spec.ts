@@ -23,10 +23,12 @@ function run(contextMsg: string, tests: CamlTestCase[]): void {
       it(desc, () => {
         const mkdn: string = test.mkdn;
         const expdHTML: string = test.html;
-        const expdData: CamlValData = test.parseData;
+        const expdData: CamlValData | undefined = test.data?.parse;
         const actlHTML: string = md.render(mkdn, env);
         assert.strictEqual(actlHTML, expdHTML);
-        assert.deepStrictEqual(env.attrs, expdData);
+        if (expdData !== undefined) {
+          assert.deepStrictEqual(env.attrs, expdData);
+        }
       });
     }
   });
@@ -44,6 +46,39 @@ describe('markdown-it-caml', () => {
 
     // go
     run('mkdn -> html', camlCases);
+
+  });
+
+  describe('state management', () => {
+
+    it('consecutive renders should not pollute each other\'s attrs', () => {
+      // first render
+      const env1: any = { absPath: '/tests/fixtures/doc1.md' };
+      const html1: string = md.render(':title::First Document\n', env1);
+      assert.ok(env1.attrs, 'env1.attrs should exist');
+      assert.ok(env1.attrs['title'], 'env1 should have "title" key');
+
+      // second render with fresh env
+      const env2: any = { absPath: '/tests/fixtures/doc2.md' };
+      const html2: string = md.render(':author::Jane Doe\n', env2);
+      assert.ok(env2.attrs, 'env2.attrs should exist');
+      assert.ok(env2.attrs['author'], 'env2 should have "author" key');
+      assert.strictEqual(env2.attrs['title'], undefined, 'env2 should NOT have "title" from env1');
+    });
+
+    it('env from first render should remain unchanged after second render', () => {
+      const env1: any = { absPath: '/tests/fixtures/doc1.md' };
+      md.render(':color::blue\n', env1);
+      const env1Snapshot = JSON.parse(JSON.stringify(env1.attrs));
+
+      const env2: any = { absPath: '/tests/fixtures/doc2.md' };
+      md.render(':color::red\n:size::large\n', env2);
+
+      // env1 should still only have its original attrs
+      assert.deepStrictEqual(env1.attrs, env1Snapshot, 'env1 attrs should be unchanged after second render');
+      // env2 should have its own attrs
+      assert.ok(env2.attrs['size'], 'env2 should have "size" key');
+    });
 
   });
 

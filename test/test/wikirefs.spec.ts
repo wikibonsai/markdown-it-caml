@@ -180,6 +180,16 @@ attr5::string1
 `<aside class="attrbox">
 <span class="attrbox-title">Attributes</span>
 <dl>
+<dt>attr1</dt>
+<dd><span class="attr wiki attr1">[[wikiattr1]]</span></dd>
+<dt>attr2</dt>
+<dd><span class="attr wiki attr2">[[wikiattr2]]</span></dd>
+<dt>attr3</dt>
+<dd><span class="attr wiki attr3">[[wikiattr3]]</span></dd>
+<dd><span class="attr wiki attr3">[[wikiattr4]]</span></dd>
+<dt>attr4</dt>
+<dd><span class="attr wiki attr4">[[wikiattr5]]</span></dd>
+<dd><span class="attr wiki attr4">[[wikiattr6]]</span></dd>
 <dt>attr5</dt>
 <dd><span class="attr string attr5">string1</span></dd>
 <dt>attr6</dt>
@@ -192,14 +202,6 @@ attr5::string1
 <dd><span class="attr string attr8">string6</span></dd>
 </dl>
 </aside>
-<p>attr1::[[wikiattr1]]
-:attr2::[[wikiattr2]]
-:attr3::[[wikiattr3]], [[wikiattr4]]</p>
-<p>:attr4::</p>
-<ul>
-<li>[[wikiattr5]]</li>
-<li>[[wikiattr6]]</li>
-</ul>
 `);
     /* eslint-enable indent */
   });

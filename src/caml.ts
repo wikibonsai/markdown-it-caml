@@ -53,9 +53,28 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       return false;
     }
     const chunk: string = state.src.substring(pos, max);
-    const lineOneMatch: RegExpExecArray | null = CAML.RGX.LINE.KEY.exec(chunk);
+    // LINE.KEY uses restrictive value pattern (excludes brackets) to avoid
+    // swallowing typed wikilinks like ':linktype::[[target]].'
+    // Fallback: if LINE.KEY fails, try permissive match for wiki values,
+    // but reject if there's content after ']]' (typed wikilink indicator)
+    let lineOneMatch: RegExpExecArray | null = CAML.RGX.LINE.KEY.exec(chunk);
     if (lineOneMatch === null) {
-      return false;
+      const permissive: RegExp = new RegExp(
+        '^' + CAML.RGX.MARKER.KEY_PRFX.source + '?'
+        + '(' + CAML.RGX.VALID_CHARS.KEY.source + ')'
+        + CAML.RGX.MARKER.COL.source
+        + '(' + CAML.RGX.VALID_CHARS.VAL.source + ')?'
+        + '$', 'im'
+      );
+      lineOneMatch = permissive.exec(chunk);
+      if (lineOneMatch === null) {
+        return false;
+      }
+      // reject typed wikilinks: value has content after ']]'
+      const val: string | undefined = lineOneMatch[2];
+      if (val && /\]\][^\],]/.test(val)) {
+        return false;
+      }
     }
     // is in a list item
     // note: this is only necessary for unprefixed wikiattrs
@@ -86,9 +105,60 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
     const key: string = lineOneMatch[1].trim();
     const value: string = lineOneMatch[2];
 
+    // helper: collect multi-line block continuation lines and build CamlValData
+    function collectMultiLineBlock(indicator: string, prefix: string): CamlValData {
+      const blockLines: string[] = [];
+      // collect continuation lines: indented or empty
+      while ((startLine + iterLine) < endLine) {
+        const contPos: number = state.bMarks[startLine + iterLine];
+        const contMax: number = state.eMarks[startLine + iterLine];
+        const contLine: string = state.src.substring(contPos, contMax);
+        // empty line is part of block
+        if (contLine.trim() === '') {
+          blockLines.push(contLine);
+          iterLine += 1;
+          continue;
+        }
+        // indented line is part of block
+        if (/^\s/.test(contLine)) {
+          blockLines.push(contLine);
+          iterLine += 1;
+          continue;
+        }
+        // non-empty, non-indented line ends the block
+        break;
+      }
+      const blockContent: string = blockLines.join('\n');
+      // for keep mode (+), include trailing blank lines in the raw block
+      const hasTrailingBlank: boolean = (blockLines.length > 0 && blockLines[blockLines.length - 1].trim() === '');
+      const isKeepMode: boolean = indicator.endsWith('+');
+      const rawBlock: string = prefix + indicator + '\n' + blockContent + (isKeepMode && hasTrailingBlank ? '\n' : '');
+      // use CAML.load on the full attr line to get the correctly processed value
+      // include trailing newline if block ended with an empty line to preserve
+      // trailing newline semantics for folded/literal mode
+      const trailingNewline: boolean = !isKeepMode && (blockLines.length > 0 && blockLines[blockLines.length - 1] === '');
+      const fullAttrLine: string = ':' + key + '::' + rawBlock + (trailingNewline ? '\n' : '');
+      const loadResult: any = CAML.load(fullAttrLine);
+      const processedValue: string = (loadResult && loadResult.data && loadResult.data[key] !== undefined)
+        ? String(loadResult.data[key])
+        : '';
+      return {
+        type: 'string',
+        string: rawBlock,
+        value: processedValue,
+      };
+    }
+
+    const MULTILINE_RGX: RegExp = new RegExp('^' + CAML.RGX.MARKER.MLINE_STR.source + '$');
+
     // values
+    //   - multi-line string (folded >, literal |, chomped >-, >|)
+    if ((value !== '') && (value !== null) && (value !== undefined) && MULTILINE_RGX.test(value.trim())) {
+      iterLine += 1;
+      const typedItem: CamlValData = collectMultiLineBlock(value.trim(), ' ');
+      curAttrItems.push(typedItem as any);
     //   - single/comma-separated list
-    if ((value !== '') && (value !== null) && (value !== undefined)) {
+    } else if ((value !== '') && (value !== null) && (value !== undefined)) {
       iterLine += 1;
       let curVal: string = '';
       let inDoubleQuote: boolean = false;
@@ -110,8 +180,15 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
         // char
         curVal += char;
       }
-      // single / last value
-      curAttrItems.push(curVal.trim());
+      // last value: check if it's a multi-line indicator
+      const lastVal: string = curVal.trim();
+      if (MULTILINE_RGX.test(lastVal)) {
+        // collect multi-line block for the last comma-separated item
+        const typedItem: CamlValData = collectMultiLineBlock(lastVal, '');
+        curAttrItems.push(typedItem as any);
+      } else {
+        curAttrItems.push(lastVal);
+      }
     //   - mkdn-separated list
     } else {
       // loop through each markdown-style list item
@@ -119,6 +196,7 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       do {
         // increment
         iterLine += 1;
+        if ((startLine + iterLine) >= endLine) { m = null; break; }
         pos = state.bMarks[startLine + iterLine];
         max = state.eMarks[startLine + iterLine];
         const thisChunk: string = state.src.substring(pos, max);
@@ -126,8 +204,16 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
         if (m !== null) {
           // m[0]: full match;
           // m[1]: bullet type;
-          // m[2]: filename
-          curAttrItems.push(m[2]);
+          // m[2]: filename / value
+          const listItemVal: string = m[2];
+          if (MULTILINE_RGX.test(listItemVal.trim())) {
+            // next line starts continuation block
+            iterLine += 1;
+            const typedItem: CamlValData = collectMultiLineBlock(listItemVal.trim(), '');
+            curAttrItems.push(typedItem as any);
+          } else {
+            curAttrItems.push(listItemVal);
+          }
         }
       } while (m);
     }
@@ -139,9 +225,18 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       // init
       if (!state.env.attrs[key]) { state.env.attrs[key] = []; }
       // prep renderables
+      const resolvedItems: CamlValData[] = [];
       for (const attrItem of curAttrItems) {
-        const typedItem: CamlValData = CAML.resolve(attrItem);
-        state.env.attrs[key].push(typedItem);
+        // multi-line items are already resolved
+        if (typeof attrItem === 'object' && attrItem !== null && 'type' in attrItem) {
+          resolvedItems.push(attrItem);
+        } else {
+          const typedItem: CamlValData = CAML.resolve(attrItem);
+          resolvedItems.push(typedItem);
+        }
+      }
+      for (const item of resolvedItems) {
+        state.env.attrs[key].push(item);
       }
       // metadata
       if (opts.addAttr) {
@@ -179,24 +274,27 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       tokens.push(tokType);
       // values / items
       for (const item of state.env.attrs[key]) {
-        // wikirefs
-        // todo: only add token if 'markdown-it-wikirefs' is detected
         let tokItem: Token;
-        if (item.type === 'wiki') {
+        // if markdown-it-wikirefs is installed and item is wiki type,
+        // use wikiattr_val token so wikirefs can render it
+        if (item.type === 'wiki' && md.renderer.rules.wikiattr_val) {
           tokItem = new state.Token('wikiattr_val', '', 1);
-          const filename: string | undefined = item.filename;
+          const filename: string | undefined = item.value;
           if (!filename) { continue; }
           tokItem.attrSet('key', key);
           tokItem.attrSet('val', filename);
-        // primitives
         } else {
           tokItem = new state.Token('attr_val', '', 1);
           tokItem.attrSet('key', key);
           tokItem.attrSet('type', item.type);
-          tokItem.attrSet('val', item.string);
-        } //else {
-        // todo: error
-        // }
+          // for multi-line strings, use 'value' (the processed/joined text)
+          // for all other items, use 'string' (the raw display text)
+          if (item.type === 'string' && item.string && item.string.includes('\n')) {
+            tokItem.attrSet('val', String(item.value));
+          } else {
+            tokItem.attrSet('val', item.string);
+          }
+        }
         tokens.push(tokItem);
       }
     }
@@ -256,7 +354,9 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       const valType: string | null = token.attrGet('type');
       const strValue: string | null = token.attrGet('val');
       const keySlug: string = key ? key.trim().toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') : '';
-      const rendered: string = `<span class="${opts.cssNames.attr} ${valType} ${keySlug}">${strValue}</span>`;
+      // convert newlines to <br> for proper HTML rendering of multi-line values
+      const displayValue: string = strValue ? strValue.replace(/\n/g, '<br>') : '';
+      const rendered: string = `<span class="${opts.cssNames.attr} ${valType} ${keySlug}">${displayValue}</span>`;
       return `<dd>${rendered}</dd>\n`;
     }
   }
