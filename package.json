@@ -27,8 +27,7 @@
     "test": "nyc mocha"
   },
   "dependencies": {
-    "caml-mkdn": "^0.0.5",
-    "lodash": "^4.17.21",
+    "caml-mkdn": "^0.0.7",
     "markdown-it": "^12.3.2"
   },
   "devDependencies": {
@@ -39,7 +38,6 @@
     "@babel/runtime": "^7.20.1",
     "@rollup/plugin-babel": "^6.0.2",
     "@rollup/plugin-commonjs": "^23.0.2",
-    "@types/lodash": "^4.14.182",
     "@types/markdown-it": "^12.2.3",
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.0.0",
