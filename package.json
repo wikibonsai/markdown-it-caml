@@ -47,7 +47,7 @@
     "caml-spec": "^0.0.4-spec",
     "del-cli": "^5.0.0",
     "eslint": "^8.27.0",
-    "markdown-it-wikirefs": "^0.0.2",
+    "markdown-it-wikirefs": "^0.0.5",
     "mocha": "^10.0.0",
     "nyc": "^15.1.0",
     "prettier": "^2.5.1",
