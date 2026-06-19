@@ -180,15 +180,9 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
         // char
         curVal += char;
       }
-      // last value: check if it's a multi-line indicator
-      const lastVal: string = curVal.trim();
-      if (MULTILINE_RGX.test(lastVal)) {
-        // collect multi-line block for the last comma-separated item
-        const typedItem: CamlValData = collectMultiLineBlock(lastVal, '');
-        curAttrItems.push(typedItem as any);
-      } else {
-        curAttrItems.push(lastVal);
-      }
+      // last value: multi-line indicators not supported in comma lists
+      // (treated as literal string values)
+      curAttrItems.push(curVal.trim());
     //   - mkdn-separated list
     } else {
       // loop through each markdown-style list item
@@ -327,7 +321,7 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
 
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   function attr_open(tokens: Token[], index: number, mdOpts: MarkdownIt.Options, env?: any): string {
-    return `<aside class="${opts.cssNames.attrbox}">\n<span class="${opts.cssNames.attrboxTitle}">${opts.attrs.title}</span>\n<dl>\n`;
+    return `<aside class="${opts.cssNames.attrbox}">\n<dl>\n`;
   }
 
   // attr : key : attrtype
@@ -335,10 +329,17 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
   function attr_key(tokens: Token[], index: number, mdOpts: MarkdownIt.Options, env?: any): string {
     const token: Token = tokens[index];
     const key: string | null = token.attrGet('key');
+    // Check if there's a previous attr_key (meaning we need to close the previous group div)
+    let hasPriorKey = false;
+    for (let i = index - 1; i >= 0; i--) {
+      if (tokens[i].type === 'attr_key') { hasPriorKey = true; break; }
+      if (tokens[i].type === 'attr_open') { break; }
+    }
+    const prefix: string = hasPriorKey ? '</div>\n<div class="attr-item">\n' : '<div class="attr-item">\n';
     if (key === null) {
-      return '<dt>attr key error</dt>\n';
+      return `${prefix}<dt>attr key error</dt>\n`;
     } else {
-      return `<dt>${key}</dt>\n`;
+      return `${prefix}<dt>${key}</dt>\n`;
     }
   }
 
@@ -364,6 +365,6 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   function attr_close(tokens: Token[], index: number, mdOpts: MarkdownIt.Options, env?: any): string {
     delete env.cur_attr_key;
-    return '</dl>\n</aside>\n';
+    return '</div>\n</dl>\n</aside>\n';
   }
 };

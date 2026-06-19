@@ -1602,10 +1602,10 @@ caml-mkdn@^0.0.7:
   dependencies:
     escape-mkdn "^0.0.3"
 
-caml-spec@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/caml-spec/-/caml-spec-0.0.2.tgz#87d8d1d060f2108a92e390988a4a95390e3bf9f4"
-  integrity sha512-K83kKdrJRmHtZPjnqjHhc2DaAmkUIQMljw2CAwSvZiVAJiTToID1zSVCSFZCJbU20qbYRU5QUk/1jB717NnyMQ==
+caml-spec@^0.0.4-spec:
+  version "0.0.4-spec"
+  resolved "https://registry.yarnpkg.com/caml-spec/-/caml-spec-0.0.4-spec.tgz#1e1de1a3625230d3a0c264630924cf24e3a60cbc"
+  integrity sha512-ZUn4JGv7uRVGokvGmFiT3S0pRQn9z4e5e9HyViLJz73zi8T3GQhfkDt6QZHoYkeTL7cu6CBetvi1idGc6tcD+Q==
 
 caniuse-lite@^1.0.30001317, caniuse-lite@^1.0.30001328, caniuse-lite@^1.0.30001400:
   version "1.0.30001431"

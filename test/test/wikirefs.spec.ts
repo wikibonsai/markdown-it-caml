@@ -54,28 +54,43 @@ attr5::string1
     // note: invalid wikiattrs only proves the wikiattrs code path is executed...this is enough for now.
     assert.strictEqual(actlHtml,
 `<aside class="attrbox">
-<span class="attrbox-title">Attributes</span>
 <dl>
+<div class="attr-item">
 <dt>attr1</dt>
 <dd><a class="attr wiki invalid">[[wikiattr1]]</a></dd>
+</div>
+<div class="attr-item">
 <dt>attr2</dt>
 <dd><a class="attr wiki invalid">[[wikiattr2]]</a></dd>
+</div>
+<div class="attr-item">
 <dt>attr3</dt>
 <dd><a class="attr wiki invalid">[[wikiattr3]]</a></dd>
 <dd><a class="attr wiki invalid">[[wikiattr4]]</a></dd>
+</div>
+<div class="attr-item">
 <dt>attr4</dt>
 <dd><a class="attr wiki invalid">[[wikiattr5]]</a></dd>
 <dd><a class="attr wiki invalid">[[wikiattr6]]</a></dd>
+</div>
+<div class="attr-item">
 <dt>attr5</dt>
 <dd><span class="attr string attr5">string1</span></dd>
+</div>
+<div class="attr-item">
 <dt>attr6</dt>
 <dd><span class="attr string attr6">string2</span></dd>
+</div>
+<div class="attr-item">
 <dt>attr7</dt>
 <dd><span class="attr string attr7">string3</span></dd>
 <dd><span class="attr string attr7">string4</span></dd>
+</div>
+<div class="attr-item">
 <dt>attr8</dt>
 <dd><span class="attr string attr8">string5</span></dd>
 <dd><span class="attr string attr8">string6</span></dd>
+</div>
 </dl>
 </aside>
 `);
@@ -121,18 +136,25 @@ attr5::string1
     // note: invalid wikiattrs only proves the wikiattrs code path is executed...this is enough for now.
     assert.strictEqual(actlHtml,
 `<aside class="attrbox">
-<span class="attrbox-title">Attributes</span>
 <dl>
+<div class="attr-item">
 <dt>attr1</dt>
 <dd><a class="attr wiki invalid">[[wikiattr1]]</a></dd>
+</div>
+<div class="attr-item">
 <dt>attr2</dt>
 <dd><a class="attr wiki invalid">[[wikiattr2]]</a></dd>
+</div>
+<div class="attr-item">
 <dt>attr3</dt>
 <dd><a class="attr wiki invalid">[[wikiattr3]]</a></dd>
 <dd><a class="attr wiki invalid">[[wikiattr4]]</a></dd>
+</div>
+<div class="attr-item">
 <dt>attr4</dt>
 <dd><a class="attr wiki invalid">[[wikiattr5]]</a></dd>
 <dd><a class="attr wiki invalid">[[wikiattr6]]</a></dd>
+</div>
 </dl>
 </aside>
 <p>attr5::string1\n:attr6::string2\n:attr7::string3, string4</p>
@@ -178,28 +200,43 @@ attr5::string1
     // assert
     assert.strictEqual(actlHtml,
 `<aside class="attrbox">
-<span class="attrbox-title">Attributes</span>
 <dl>
+<div class="attr-item">
 <dt>attr1</dt>
 <dd><span class="attr wiki attr1">[[wikiattr1]]</span></dd>
+</div>
+<div class="attr-item">
 <dt>attr2</dt>
 <dd><span class="attr wiki attr2">[[wikiattr2]]</span></dd>
+</div>
+<div class="attr-item">
 <dt>attr3</dt>
 <dd><span class="attr wiki attr3">[[wikiattr3]]</span></dd>
 <dd><span class="attr wiki attr3">[[wikiattr4]]</span></dd>
+</div>
+<div class="attr-item">
 <dt>attr4</dt>
 <dd><span class="attr wiki attr4">[[wikiattr5]]</span></dd>
 <dd><span class="attr wiki attr4">[[wikiattr6]]</span></dd>
+</div>
+<div class="attr-item">
 <dt>attr5</dt>
 <dd><span class="attr string attr5">string1</span></dd>
+</div>
+<div class="attr-item">
 <dt>attr6</dt>
 <dd><span class="attr string attr6">string2</span></dd>
+</div>
+<div class="attr-item">
 <dt>attr7</dt>
 <dd><span class="attr string attr7">string3</span></dd>
 <dd><span class="attr string attr7">string4</span></dd>
+</div>
+<div class="attr-item">
 <dt>attr8</dt>
 <dd><span class="attr string attr8">string5</span></dd>
 <dd><span class="attr string attr8">string6</span></dd>
+</div>
 </dl>
 </aside>
 `);
