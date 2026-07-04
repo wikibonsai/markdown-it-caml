@@ -113,8 +113,27 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
         const contPos: number = state.bMarks[startLine + iterLine];
         const contMax: number = state.eMarks[startLine + iterLine];
         const contLine: string = state.src.substring(contPos, contMax);
-        // empty line is part of block
+        // empty line: part of the block only if more indented content follows.
+        // if the next non-blank line is non-indented (a following attr/paragraph),
+        // this blank is a separator that ends the block (for non-keep modes) — it
+        // must not be swallowed. matches caml-mkdn's stop rule; keep mode (+)
+        // still preserves trailing blanks.
         if (contLine.trim() === '') {
+          const isKeepMode: boolean = indicator.endsWith('+');
+          let foundNext: boolean = false;
+          let nextIndented: boolean = false;
+          for (let k = (startLine + iterLine + 1); k < endLine; k++) {
+            const lookahead: string = state.src.substring(state.bMarks[k], state.eMarks[k]);
+            if (lookahead.trim() === '') { continue; }
+            foundNext = true;
+            nextIndented = /^\s/.test(lookahead);
+            break;
+          }
+          // a blank followed by a non-indented line (a following attr/paragraph)
+          // ends the block and is a separator, not block content — so exclude it.
+          // at EOF (no following content) or when more indented content follows,
+          // keep it (chomp handles trailing-newline semantics downstream).
+          if (foundNext && !nextIndented && !isKeepMode) { break; }
           blockLines.push(contLine);
           iterLine += 1;
           continue;
