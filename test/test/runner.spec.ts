@@ -6,6 +6,8 @@ import type { CamlOptions } from '../../src/types';
 
 import markdown from 'markdown-it';
 import caml_plugin from '../../src';
+import wikirefs_plugin from 'markdown-it-wikirefs';
+import type { WikiRefsOptions } from 'markdown-it-wikirefs';
 
 import type { CamlTestCase } from 'caml-spec';
 import { camlCases } from 'caml-spec';
@@ -38,7 +40,16 @@ describe('markdown-it-caml', () => {
 
   beforeEach(() => {
     // mockOpts = makeMockOptsForRenderOnly();
-    md = markdown().use(caml_plugin, mockOpts);
+    // register wikirefs alongside caml so wiki attr values render as <a> via the
+    // wikiattr handshake; the fixtures resolver matches caml-spec's expected hrefs.
+    const wikiOpts: Partial<WikiRefsOptions> = {
+      resolveHtmlHref: (_env: any, fname: string) => '/tests/fixtures/' + fname,
+      resolveHtmlText: (_env: any, fname: string) => fname.replace(/-/g, ' '),
+      // only the wikiattr handshake — leave content [[wikilinks]] as plain text,
+      // matching caml-spec's "should not be processed here" cases.
+      links: { enable: false },
+    };
+    md = markdown().use(caml_plugin, mockOpts).use(wikirefs_plugin, wikiOpts);
     env = { absPath: '/tests/fixtures/file-with-caml-attrs.md' };
   });
 
