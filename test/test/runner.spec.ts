@@ -11,6 +11,9 @@ import type { WikiRefsOptions } from 'markdown-it-wikirefs';
 
 import type { CamlTestCase } from 'caml-spec';
 import { camlCases } from 'caml-spec';
+// shared wikirefs-spec fixture resolvers (adapted to markdown-it's env-first
+// resolver signature below) — a caml wiki attr value is a wikiref.
+import { makeMockOptsForRenderOnly } from 'wikirefs-spec';
 
 
 let env: any;
@@ -39,12 +42,13 @@ function run(contextMsg: string, tests: CamlTestCase[]): void {
 describe('markdown-it-caml', () => {
 
   beforeEach(() => {
-    // mockOpts = makeMockOptsForRenderOnly();
     // register wikirefs alongside caml so wiki attr values render as <a> via the
-    // wikiattr handshake; the fixtures resolver matches caml-spec's expected hrefs.
+    // wikiattr handshake. Resolvers come from the shared wikirefs-spec fixture data,
+    // adapted to markdown-it's env-first resolver signature.
+    const m = makeMockOptsForRenderOnly();
     const wikiOpts: Partial<WikiRefsOptions> = {
-      resolveHtmlHref: (_env: any, fname: string) => '/tests/fixtures/' + fname,
-      resolveHtmlText: (_env: any, fname: string) => fname.replace(/-/g, ' '),
+      resolveHtmlHref: (_env: any, fname: string) => m.resolveHtmlHref(fname),
+      resolveHtmlText: (_env: any, fname: string) => m.resolveHtmlText(fname),
       // only the wikiattr handshake — leave content [[wikilinks]] as plain text,
       // matching caml-spec's "should not be processed here" cases.
       links: { enable: false },
