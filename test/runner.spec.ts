@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 
 import type MarkdownIt from 'markdown-it';
 import type { CamlValData } from 'caml-mkdn';
-import type { CamlOptions } from '../../src/types';
+import type { CamlOptions } from '../src/types';
 
 import markdown from 'markdown-it';
-import caml_plugin from '../../src';
+import caml_plugin from '../src';
 import wikirefs_plugin from 'markdown-it-wikirefs';
 import type { WikiRefsOptions } from 'markdown-it-wikirefs';
 

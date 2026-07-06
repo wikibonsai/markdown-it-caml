@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import type MarkdownIt from 'markdown-it';
 
 import markdown from 'markdown-it';
-import caml_plugin from '../../src';
+import caml_plugin from '../src';
 
 
 let md: MarkdownIt;

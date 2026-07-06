@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 
 import type MarkdownIt from 'markdown-it';
 
-import type { CamlOptions } from '../../src';
+import type { CamlOptions } from '../src';
 
 import markdown from 'markdown-it';
-import caml_plugin from '../../src';
+import caml_plugin from '../src';
 
-import type { TestCase } from '../types';
+import type { TestCase } from './types';
 
 
 // let env: any;

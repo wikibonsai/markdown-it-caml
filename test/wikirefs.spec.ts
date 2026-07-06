@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import type MarkdownIt from 'markdown-it';
 import type { RuleCore } from 'markdown-it/lib/parser_core';
 
-import type { CamlOptions } from '../../src';
+import type { CamlOptions } from '../src';
 import type { WikiRefsOptions } from 'markdown-it-wikirefs';
 
 import markdown from 'markdown-it';
-import caml_plugin from '../../src';
+import caml_plugin from '../src';
 import wikirefs_plugin from 'markdown-it-wikirefs';
 
 
