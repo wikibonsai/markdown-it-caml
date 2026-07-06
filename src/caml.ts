@@ -378,6 +378,8 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       // wiki value: render as an <a> link using caml's own resolvers (or a plain
       // fallback). this <a> intentionally DUPLICATES the anchor markdown-it-wikirefs
       // would build, so markdown-it-caml stays standalone (no wikirefs runtime dep).
+      // Keep the class contract in sync with markdown-it-wikirefs' wikiattr renderer:
+      // https://github.com/wikibonsai/markdown-it-wikirefs/blob/main/src/lib/wikiattr.ts
       // NOTE: when markdown-it-wikirefs is co-registered, wiki values are emitted as
       // 'wikiattr_val' tokens (see attrbox) and never reach this branch.
       if (valType === 'wiki') {
