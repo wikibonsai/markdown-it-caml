@@ -354,7 +354,7 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       if (tokens[i].type === 'attr_key') { hasPriorKey = true; break; }
       if (tokens[i].type === 'attr_open') { break; }
     }
-    const prefix: string = hasPriorKey ? '</div>\n<div class="attr-item">\n' : '<div class="attr-item">\n';
+    const prefix: string = hasPriorKey ? `</div>\n<div class="${opts.cssNames.attrItem}">\n` : `<div class="${opts.cssNames.attrItem}">\n`;
     if (key === null) {
       return `${prefix}<dt>attr key error</dt>\n`;
     } else {

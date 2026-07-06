@@ -14,6 +14,7 @@ export interface OptCssNames {
   wiki: string;
   invalid: string;
   attrbox: string;
+  attrItem: string;
   attrboxTitle: string;
 }
 

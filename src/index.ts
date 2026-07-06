@@ -34,6 +34,7 @@ function caml_plugin(md: MarkdownIt, opts?: Partial<CamlOptions>): void {
       wiki: 'wiki',
       invalid: 'invalid',
       attrbox: 'attrbox',
+      attrItem: 'attr-item',
       attrboxTitle: 'attrbox-title',
     },
   };
