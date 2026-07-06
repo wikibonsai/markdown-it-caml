@@ -37,7 +37,6 @@ function caml_plugin(md: MarkdownIt, opts?: Partial<CamlOptions>): void {
       doctype: 'doctype__',
       attrbox: 'attrbox',
       attrItem: 'attr-item',
-      attrboxTitle: 'attrbox-title',
     },
   };
   const fullOpts: CamlOptions = deepMerge(defaults, opts);
