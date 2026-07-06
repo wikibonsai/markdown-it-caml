@@ -1,25 +1,11 @@
+import { defu } from 'defu';
+
 import type MarkdownIt from 'markdown-it/lib';
 
 import type { CamlOptions } from './types';
 
 import { caml_attrs } from './caml';
 
-
-function deepMerge(target: any, ...sources: any[]): any {
-  const result = { ...target };
-  for (const source of sources) {
-    if (!source) continue;
-    for (const key of Object.keys(source)) {
-      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])
-          && target[key] && typeof target[key] === 'object' && !Array.isArray(target[key])) {
-        result[key] = deepMerge(target[key], source[key]);
-      } else {
-        result[key] = source[key];
-      }
-    }
-  }
-  return result;
-}
 
 function caml_plugin(md: MarkdownIt, opts?: Partial<CamlOptions>): void {
   // opts
@@ -39,7 +25,8 @@ function caml_plugin(md: MarkdownIt, opts?: Partial<CamlOptions>): void {
       attrItem: 'attr-item',
     },
   };
-  const fullOpts: CamlOptions = deepMerge(defaults, opts);
+  // defu(opts, defaults): user opts win, defaults fill gaps — parity with wikirefs
+  const fullOpts: CamlOptions = defu(opts, defaults) as CamlOptions;
 
   caml_attrs(md, fullOpts);
 }
