@@ -15,7 +15,7 @@ describe('caml standalone (no wikirefs) wiki attr values', () => {
     const md: MarkdownIt = markdown().use(caml_plugin, {});
     const actlHtml: string = md.render(':attrtype::[[fname-a]]\n');
     assert.ok(
-      actlHtml.includes('<span class="attr wiki attrtype">[[fname-a]]</span>'),
+      actlHtml.includes('<span class="attr string attrtype">[[fname-a]]</span>'),
       `expected a wiki string span, got:\n${actlHtml}`,
     );
     assert.ok(!/href=/.test(actlHtml), `expected no href, got:\n${actlHtml}`);
@@ -29,7 +29,7 @@ describe('caml standalone (no wikirefs) wiki attr values', () => {
     } as any);
     const actlHtml: string = md.render(':attrtype::[[fname-a]]\n');
     assert.ok(
-      actlHtml.includes('<span class="attr wiki attrtype">[[fname-a]]</span>'),
+      actlHtml.includes('<span class="attr string attrtype">[[fname-a]]</span>'),
       `expected a wiki string span (resolvers ignored), got:\n${actlHtml}`,
     );
     assert.ok(!/href=/.test(actlHtml), 'no href even with resolvers');

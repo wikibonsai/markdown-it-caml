@@ -375,14 +375,15 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       const strValue: string | null = token.attrGet('val');
       const slug = (s: string): string => s.trim().toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
       const keySlug: string = key ? slug(key) : '';
-      // caml does NOT resolve wikirefs. A wiki value renders like any other value — a
-      // plain string span showing the literal [[fname]] (type class 'wiki'), same as
-      // the primitive path below. When markdown-it-wikirefs is co-registered, wiki
-      // values are emitted as 'wikiattr_val' tokens (see attrbox) and resolved by
-      // wikirefs, so this renderer only ever sees the standalone case. See caml-wikiref-handoff.
+      // caml does NOT resolve wikirefs. A wiki value renders as a plain string — a span
+      // with the 'string' type class showing the literal [[fname]] — like any string
+      // value. When markdown-it-wikirefs is co-registered, wiki values are emitted as
+      // 'wikiattr_val' tokens (see attrbox) and resolved by wikirefs, so this renderer
+      // only ever sees the standalone case. See caml-wikiref-handoff.
       // convert newlines to <br> for proper HTML rendering of multi-line values
+      const typeCls: string = valType === 'wiki' ? 'string' : (valType as string);
       const displayValue: string = strValue ? strValue.replace(/\n/g, '<br>') : '';
-      const rendered: string = `<span class="${opts.cssNames.attr} ${valType} ${keySlug}">${displayValue}</span>`;
+      const rendered: string = `<span class="${opts.cssNames.attr} ${typeCls} ${keySlug}">${displayValue}</span>`;
       return `<dd>${rendered}</dd>\n`;
     }
   }
