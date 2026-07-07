@@ -375,37 +375,11 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       const strValue: string | null = token.attrGet('val');
       const slug = (s: string): string => s.trim().toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
       const keySlug: string = key ? slug(key) : '';
-      // wiki value: render as an <a> link using caml's own resolvers (or a plain
-      // fallback). this <a> intentionally DUPLICATES the anchor markdown-it-wikirefs
-      // would build, so markdown-it-caml stays standalone (no wikirefs runtime dep).
-      // Keep the class contract in sync with markdown-it-wikirefs' wikiattr renderer:
-      // https://github.com/wikibonsai/markdown-it-wikirefs/blob/main/src/lib/wikiattr.ts
-      // NOTE: when markdown-it-wikirefs is co-registered, wiki values are emitted as
-      // 'wikiattr_val' tokens (see attrbox) and never reach this branch.
-      if (valType === 'wiki') {
-        const fname: string = strValue ? strValue.replace(/^\[\[/, '').replace(/\]\]$/, '') : '';
-        const attr: string = opts.cssNames.attr;
-        const wiki: string = opts.cssNames.wiki;
-        const baseUrl: string = opts.baseUrl ?? '';
-        const href: string | undefined = opts.resolveHtmlHref
-          ? opts.resolveHtmlHref(env, fname)
-          : '/' + slug(fname);
-        const text: string = (opts.resolveHtmlText && opts.resolveHtmlText(env, fname)) || fname;
-        const doctype: string | undefined = opts.resolveDocType ? opts.resolveDocType(env, fname) : undefined;
-        if (href) {
-          const classes: string[] = [attr, wiki, opts.cssNames.reftype + keySlug];
-          if (doctype && doctype.length > 0) {
-            classes.push(opts.cssNames.doctype + slug(doctype));
-          }
-          const url: string = baseUrl + href;
-          const rendered: string = `<a class="${classes.join(' ')}" href="${url}" data-href="${url}">${text}</a>`;
-          return `<dd>${rendered}</dd>\n`;
-        } else {
-          const rendered: string = `<a class="${attr} ${wiki} ${opts.cssNames.invalid}">[[${fname}]]</a>`;
-          return `<dd>${rendered}</dd>\n`;
-        }
-      }
-      // primitives
+      // caml does NOT resolve wikirefs. A wiki value renders like any other value — a
+      // plain string span showing the literal [[fname]] (type class 'wiki'), same as
+      // the primitive path below. When markdown-it-wikirefs is co-registered, wiki
+      // values are emitted as 'wikiattr_val' tokens (see attrbox) and resolved by
+      // wikirefs, so this renderer only ever sees the standalone case. See caml-wikiref-handoff.
       // convert newlines to <br> for proper HTML rendering of multi-line values
       const displayValue: string = strValue ? strValue.replace(/\n/g, '<br>') : '';
       const rendered: string = `<span class="${opts.cssNames.attr} ${valType} ${keySlug}">${displayValue}</span>`;

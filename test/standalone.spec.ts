@@ -2,51 +2,37 @@ import assert from 'node:assert/strict';
 
 import type MarkdownIt from 'markdown-it';
 
-import type { CamlOptions } from '../src';
-
 import markdown from 'markdown-it';
 import caml_plugin from '../src';
 
 
-// standalone: markdown-it-wikirefs is NOT co-registered. caml must still render a
-// wiki-valued attribute as a valid <a> link, resolving via its OWN resolvers.
+// standalone: markdown-it-wikirefs is NOT co-registered. caml does NOT resolve wikirefs —
+// a wiki-valued attribute renders as a plain string span showing the literal [[fname]].
+// (caml + wikirefs interop, where wikirefs upgrades these to links, is covered elsewhere.)
 describe('caml standalone (no wikirefs) wiki attr values', () => {
 
-  it('valid: renders wiki attr value as an <a> link via caml\'s own resolvers', () => {
-    const camlOpts: Partial<CamlOptions> = {
+  it('renders a wiki attr value as a plain string span', () => {
+    const md: MarkdownIt = markdown().use(caml_plugin, {});
+    const actlHtml: string = md.render(':attrtype::[[fname-a]]\n');
+    assert.ok(
+      actlHtml.includes('<span class="attr wiki attrtype">[[fname-a]]</span>'),
+      `expected a wiki string span, got:\n${actlHtml}`,
+    );
+    assert.ok(!/href=/.test(actlHtml), `expected no href, got:\n${actlHtml}`);
+    assert.ok(!actlHtml.includes('data-wikiref'), `expected no hand-off attribute, got:\n${actlHtml}`);
+  });
+
+  it('ignores any resolvers passed to caml (caml never resolves wikirefs)', () => {
+    const md: MarkdownIt = markdown().use(caml_plugin, {
       resolveHtmlHref: (_env: any, f: string) => '/tests/fixtures/' + f,
       resolveHtmlText: (_env: any, f: string) => f,
-    };
-    const md: MarkdownIt = markdown().use(caml_plugin, camlOpts);
+    } as any);
     const actlHtml: string = md.render(':attrtype::[[fname-a]]\n');
     assert.ok(
-      actlHtml.includes('<a class="attr wiki reftype__attrtype" href="/tests/fixtures/fname-a" data-href="/tests/fixtures/fname-a">fname-a</a>'),
-      `expected a valid <a> link, got:\n${actlHtml}`,
+      actlHtml.includes('<span class="attr wiki attrtype">[[fname-a]]</span>'),
+      `expected a wiki string span (resolvers ignored), got:\n${actlHtml}`,
     );
-    // should NOT be a standalone span
-    assert.ok(!actlHtml.includes('<span class="attr wiki'), `expected no wiki span, got:\n${actlHtml}`);
-  });
-
-  it('zombie: renders <a class="attr wiki invalid"> when href resolves undefined', () => {
-    const camlOpts: Partial<CamlOptions> = {
-      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-      resolveHtmlHref: (_env: any, _f: string) => undefined,
-    };
-    const md: MarkdownIt = markdown().use(caml_plugin, camlOpts);
-    const actlHtml: string = md.render(':attrtype::[[fname-a]]\n');
-    assert.ok(
-      actlHtml.includes('<a class="attr wiki invalid">[[fname-a]]</a>'),
-      `expected an invalid (zombie) <a>, got:\n${actlHtml}`,
-    );
-  });
-
-  it('default fallback: no resolvers still yields a valid <a> (slugged href)', () => {
-    const md: MarkdownIt = markdown().use(caml_plugin, {});
-    const actlHtml: string = md.render(':attrtype::[[Fname A]]\n');
-    assert.ok(
-      actlHtml.includes('<a class="attr wiki reftype__attrtype" href="/fname-a" data-href="/fname-a">Fname A</a>'),
-      `expected a default-resolved <a>, got:\n${actlHtml}`,
-    );
+    assert.ok(!/href=/.test(actlHtml), 'no href even with resolvers');
   });
 
 });
