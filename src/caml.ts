@@ -81,6 +81,15 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       if (val && /\]\]\s*[^\s,\]]/.test(val)) {
         return false;
       }
+      // labelled wikilinks are typed wikilinks, not attrs: a wikiattr value is a
+      // bare reference ('[[target]]'), so a label ('[[target|label]]') means
+      // display-text prose — caml stands down and lets wikirefs render it as a
+      // typed wikilink (e.g. ':linktype::[[fname|label]]'). (A bare '[[target]]'
+      // stays a wikiattr; a malformed '[fname]' stays a caml string primitive —
+      // only the labelled wiki form falls back.)
+      if (val && /\[\[[^\]]*\|[^\]]*\]\]/.test(val)) {
+        return false;
+      }
     }
     // is in a list item
     // note: this is only necessary for unprefixed wikiattrs
