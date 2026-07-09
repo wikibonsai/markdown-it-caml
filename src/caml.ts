@@ -18,7 +18,9 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
   // [ ..., 'hr', 'caml', 'wikiattr', 'list', ... ]
   // 
   // note: 'attrs' is added as an extra dummy 'alt' specifically for markdown-it-wikirefs interop
-  md.block.ruler.after('hr', 'caml', caml_rule, { alt: ['paragraph', 'attrs'] });  // in case bugs show up: [ 'paragraph', 'reference', 'blockquote', 'list' ]
+  // 'alt' lists the block rules this one may interrupt — parity with markdown-it-wikirefs'
+  // wikiattr rule so a caml attr terminates a preceding paragraph/blockquote/list.
+  md.block.ruler.after('hr', 'caml', caml_rule, { alt: ['paragraph', 'reference', 'blockquote', 'list', 'attrs'] });
   // the 'attrbox' rule is the midpoint between the parse and render rules.
   if (opts.attrs.render) {
     md.core.ruler.after('inline', 'attrbox', attrbox);
@@ -70,9 +72,13 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       if (lineOneMatch === null) {
         return false;
       }
-      // reject typed wikilinks: value has content after ']]'
+      // reject typed wikilinks / trailing text: ']]' followed (after optional
+      // whitespace) by a non-comma, non-']' char — e.g. '[[target]].' or
+      // '[[target]] text'. A comma AFTER the whitespace is a list separator, so
+      // padded lists like '[[a]] , [[b]]' are allowed (the splitter below trims).
+      // Matches caml-mkdn's load, which accepts the pad but not trailing text.
       const val: string | undefined = lineOneMatch[2];
-      if (val && /\]\][^\],]/.test(val)) {
+      if (val && /\]\]\s*[^\s,\]]/.test(val)) {
         return false;
       }
     }
@@ -83,6 +89,12 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
     || (lineOneMatch[0].indexOf('* ') === 0)
     || (lineOneMatch[0].indexOf('+ ') === 0)
     ) {
+      return false;
+    }
+    // strictness: only ONE optional space is allowed after '::' (parity with wikirefs).
+    // COL consumes up to one space, so if the captured value still has LEADING
+    // whitespace, there were >1 spaces after '::' — reject (not a wikiattr).
+    if (lineOneMatch[2] && /^\s/.test(lineOneMatch[2])) {
       return false;
     }
 
