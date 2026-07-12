@@ -6,7 +6,14 @@ import type { RuleCore } from 'markdown-it/lib/parser_core';
 import markdown from 'markdown-it';
 import footnote from 'markdown-it-footnote';
 import caml_plugin from '../src';
-import wikirefs_plugin from 'markdown-it-wikirefs';
+// the wikirefs sibling is a devDep for the co-registration (dual) test ONLY. gate on it:
+// if it isn't installed (fresh CI without the companion), the dual suite SKIPS rather than
+// crashing the file on a missing import.
+/* eslint-disable @typescript-eslint/no-var-requires */
+let wikirefs_plugin: any;
+try { const m = require('markdown-it-wikirefs'); wikirefs_plugin = (m && m.default) || m; } catch { /* sibling not installed — dual suite skips */ }
+/* eslint-enable @typescript-eslint/no-var-requires */
+const hasWikirefsSibling: boolean = !!wikirefs_plugin;
 
 import { camlCases } from 'caml-spec';
 import type { WikiRefTestCase } from 'wikirefs-spec';
@@ -40,7 +47,8 @@ function run(contextMsg: string, tests: RenderCase[]): void {
   });
 }
 
-describe('markdown-it-caml: caml + wikirefs', () => {
+// dual suite runs only when the wikirefs sibling is installed (see hasWikirefsSibling)
+(hasWikirefsSibling ? describe : describe.skip)('markdown-it-caml: caml + wikirefs', () => {
 
   before(() => {
     // the 2 gfm-footnote wikiattr fixtures ship as placeholders; supply the real
