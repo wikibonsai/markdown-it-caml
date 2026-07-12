@@ -27,7 +27,7 @@
     "test": "nyc mocha"
   },
   "dependencies": {
-    "caml-mkdn": "^0.0.8",
+    "caml-mkdn": "^0.0.9",
     "defu": "^6.1.7",
     "markdown-it": "^12.3.2"
   },
@@ -46,7 +46,7 @@
     "@types/sinon": "^10.0.11",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
-    "caml-spec": "^0.0.4-spec",
+    "caml-spec": "^0.0.6-spec",
     "del-cli": "^5.0.0",
     "eslint": "^8.27.0",
     "markdown-it-footnote": "^3.0.3",
