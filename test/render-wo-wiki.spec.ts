@@ -7,13 +7,13 @@ import markdown from 'markdown-it';
 import caml_plugin from '../src';
 
 import type { CamlTestCase } from 'caml-spec';
-import { camlCases, camlWithoutWikiRefsCases } from 'caml-spec';
+import { camlCases, camlWikiNoParseCases } from 'caml-spec';
 
 
 // caml ALONE (no wikirefs co-registered). caml never resolves wikirefs: a wiki-valued
 // attribute renders as a plain string span (<span class="attr string <key>">[[fname]]</span>).
 // Runs the shared primitives (camlCases) + the standalone wiki cases
-// (camlWithoutWikiRefsCases). The caml + wikirefs setup lives in runner-w-wiki.spec.ts.
+// (camlWikiNoParseCases). The caml + wikirefs setup lives in runner-w-wiki.spec.ts.
 let env: any;
 let md: MarkdownIt;
 
@@ -45,7 +45,7 @@ describe('markdown-it-caml: caml standalone (no wikirefs)', () => {
 
   describe('render', () => {
 
-    run('mkdn -> html', ([] as CamlTestCase[]).concat(camlCases).concat(camlWithoutWikiRefsCases));
+    run('mkdn -> html', ([] as CamlTestCase[]).concat(camlCases).concat(camlWikiNoParseCases));
 
   });
 
