@@ -13,7 +13,6 @@ function caml_plugin(md: MarkdownIt, opts?: Partial<CamlOptions>): void {
     attrs: {
       enable: true,
       render: true,
-      title: 'Attributes',
     },
     cssNames: {
       attr: 'attr',

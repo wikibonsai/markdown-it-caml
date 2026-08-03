@@ -6,7 +6,6 @@ import type MarkdownIt from 'markdown-it';
 export interface OptAttr {
   enable: boolean;
   render: boolean;
-  title: string;
 }
 
 export interface OptCssNames {

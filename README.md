@@ -61,10 +61,6 @@ A boolean property that toggles parsing and rendering wikiattrs on/off.
 
 A boolean property that toggles rendering wikiattrs on/off. This is useful in the scenario where wikiattrs are used for metadata and not for display purposes; like a yaml-stand-in.
 
-#### `attrs.title`
-
-A string to be rendered in the wikiattrs' attrbox.
-
 ### `cssNames`
 
 CSS classnames may be overridden here.
@@ -76,7 +72,3 @@ Classname for wikiattrs. Default is `attr`.
 #### `cssNames.attrbox`
 
 Classname for the wikiattr attrbox. Default is `attrbox`.
-
-#### `cssNames.attrboxTitle`
-
-Classname for the wikiattr attrbox title. Default is `attrbox-title`.
