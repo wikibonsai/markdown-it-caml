@@ -45,9 +45,13 @@ For syntax specifications, see the [caml-spec](https://github.com/wikibonsai/cam
 
 ## Options
 
+### `addAttr: (env: any, key: string, value: string) => void`
+
+Called once per collected caml attribute (key/value pair); use for metadata or indexing. `env` is threaded so value-passing works across stages (e.g. recursive embeds). When a co-registered `markdown-it-wikirefs` is present, a wiki-valued attribute is reported with the literal `[[fname]]` as the value and the parsed value is also available on `env.attrs[key]`. Otherwise a plain `'string'`.
+
 ### `attrs`
 
-These are options wikiattrs-specific options.
+These are options attrbox-specific options.
 
 #### `attrs.enable`
 
