@@ -92,8 +92,14 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       // display-text prose — caml stands down and lets wikirefs render it as a
       // typed wikilink (e.g. ':linktype::[[fname|label]]'). (A bare '[[target]]'
       // stays a wikiattr; a malformed '[fname]' stays a caml string primitive —
-      // only the labelled wiki form falls back.)
+      // only the non-bare wiki forms fall back.)
       if (val && /\[\[[^\]]*\|[^\]]*\]\]/.test(val)) {
+        return false;
+      }
+      // header wikilinks ('[[target#header]]') are section links, not bare wikiattr
+      // refs — like labelled wikilinks, caml stands down and lets wikirefs render the
+      // (typed) wikilink. wikirefs-spec marks these 'headers not supported in wikiattrs'.
+      if (val && /\[\[[^\]]*#[^\]]*\]\]/.test(val)) {
         return false;
       }
     }
