@@ -11,6 +11,12 @@ import * as CAML from 'caml-mkdn';
 
 export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
 
+  // caml is wikirefs-agnostic by default: `[[x]]` resolves to a plain string. only when
+  // markdown-it-wikirefs is co-registered (it installs the `wikiattr_val` render rule) do
+  // we ask caml to recognize `[[x]]` as a 'wiki' type, which triggers the hand-off below.
+  // checked at parse time so plugin registration order doesn't matter.
+  const wikirefsPresent = (): boolean => !!md.renderer.rules.wikiattr_val;
+
   // ruler rules //
 
   // the 'caml' block rule is the parse that drives the markdown-it-caml plugin
@@ -178,7 +184,7 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       // trailing newline semantics for folded/literal mode
       const trailingNewline: boolean = !isKeepMode && (blockLines.length > 0 && blockLines[blockLines.length - 1] === '');
       const fullAttrLine: string = ':' + key + '::' + rawBlock + (trailingNewline ? '\n' : '');
-      const loadResult: any = CAML.load(fullAttrLine);
+      const loadResult: any = CAML.load(fullAttrLine, { wikirefs: wikirefsPresent() });
       const processedValue: string = (loadResult && loadResult.data && loadResult.data[key] !== undefined)
         ? String(loadResult.data[key])
         : '';
@@ -265,7 +271,7 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
         if (typeof attrItem === 'object' && attrItem !== null && 'type' in attrItem) {
           resolvedItems.push(attrItem);
         } else {
-          const typedItem: CamlValData = CAML.resolve(attrItem);
+          const typedItem: CamlValData = CAML.resolve(attrItem, { wikirefs: wikirefsPresent() });
           resolvedItems.push(typedItem);
         }
       }
