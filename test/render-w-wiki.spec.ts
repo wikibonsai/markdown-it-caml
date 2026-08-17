@@ -51,6 +51,13 @@ function run(contextMsg: string, tests: RenderCase[]): void {
 (hasWikirefsSibling ? describe : describe.skip)('markdown-it-caml: caml + wikirefs', () => {
 
   before(() => {
+    // THE JOINT-CASE RULE (see both spec READMEs): when caml + wikirefs run
+    // together, caml owns the attrbox — the dt carries caml's key__<slug>, not
+    // wikirefs' standalone reftype__. wikirefs-spec cases assert the STANDALONE
+    // contract, so adapt their dts for this co-registered suite (idempotent).
+    wikiAttrCases.forEach((testcase: WikiRefTestCase) => {
+      testcase.html = testcase.html.replace(/<dt class="reftype__/g, '<dt class="key__');
+    });
     // the 2 gfm-footnote wikiattr fixtures ship as placeholders; supply the real
     // markdown-it-footnote html. caml stays OUT of the footnote (a nested context), so
     // wikirefs renders the value as a body wikilink inside. (Same before-hook structure

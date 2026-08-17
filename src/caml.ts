@@ -391,7 +391,9 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
     if (key === null) {
       return `${prefix}<dt>attr key error</dt>\n`;
     } else {
-      return `${prefix}<dt>${key}</dt>\n`;
+      // the key's class rides the dt (key__<slug> -- the composer owns the
+      // contract); value spans carry structure + type only. See caml-spec.
+      return `${prefix}<dt class="${CAML.keyCssClass(key)}">${key}</dt>\n`;
     }
   }
 
@@ -403,20 +405,19 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
     if (token === null) {
       return '<dd>attr error</dd>\n';// primitives
     } else {
-      const key: string | null = token.attrGet('key');
       const valType: string | null = token.attrGet('type');
       const strValue: string | null = token.attrGet('val');
-      const slug = (s: string): string => s.trim().toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-      const keySlug: string = key ? slug(key) : '';
       // caml does NOT resolve wikirefs. A wiki value renders as a plain string — a span
       // with the 'string' type class showing the literal [[fname]] — like any string
       // value. When markdown-it-wikirefs is co-registered, wiki values are emitted as
       // 'wikiattr_val' tokens (see attrbox) and resolved by wikirefs, so this renderer
       // only ever sees the standalone case. See caml-wikiref-handoff.
       // convert newlines to <br> for proper HTML rendering of multi-line values
-      const typeCls: string = valType === 'wiki' ? 'string' : (valType as string);
+      // classes via the composer: structure + value type, NO raw key (the key's
+      // class lives on the dt); the structural token stays overridable
+      const typeCls: string = CAML.attrCssClasses(valType as string)[1];
       const displayValue: string = strValue ? strValue.replace(/\n/g, '<br>') : '';
-      const rendered: string = `<span class="${opts.cssNames.attr} ${typeCls} ${keySlug}">${displayValue}</span>`;
+      const rendered: string = `<span class="${opts.cssNames.attr} ${typeCls}">${displayValue}</span>`;
       return `<dd>${rendered}</dd>\n`;
     }
   }
