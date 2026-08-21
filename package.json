@@ -27,7 +27,7 @@
     "test": "nyc mocha"
   },
   "dependencies": {
-    "caml-mkdn": "^0.0.11",
+    "caml-mkdn": "^0.0.12",
     "defu": "^6.1.7",
     "markdown-it": "^12.3.2"
   },
