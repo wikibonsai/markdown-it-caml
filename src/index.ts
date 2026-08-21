@@ -1,9 +1,6 @@
 import { defu } from 'defu';
-
 import type MarkdownIt from 'markdown-it/lib';
-
 import type { CamlOptions } from './types';
-
 import { caml_attrs } from './caml';
 
 
@@ -16,12 +13,9 @@ function caml_plugin(md: MarkdownIt, opts?: Partial<CamlOptions>): void {
     },
     cssNames: {
       attr: 'attr',
-      wiki: 'wiki',
-      invalid: 'invalid',
-      reftype: 'reftype__',
-      doctype: 'doctype__',
       attrbox: 'attrbox',
       attrItem: 'attr-item',
+      key: 'key__',
     },
   };
   // defu(opts, defaults): user opts win, defaults fill gaps — parity with wikirefs

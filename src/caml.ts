@@ -391,9 +391,10 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
     if (key === null) {
       return `${prefix}<dt>attr key error</dt>\n`;
     } else {
-      // the key's class rides the dt (key__<slug> -- the composer owns the
-      // contract); value spans carry structure + type only. See caml-spec.
-      return `${prefix}<dt class="${CAML.keyCssClass(key)}">${key}</dt>\n`;
+      // the key's class rides the dt: the cssNames.key prefix + the slug. this
+      // parser owns its class assembly (mirroring wikirefs' cssNames.reftype dt);
+      // slugify is the one shared primitive. value spans carry structure + type.
+      return `${prefix}<dt class="${opts.cssNames.key}${CAML.slugify(key)}">${key}</dt>\n`;
     }
   }
 
@@ -413,9 +414,10 @@ export const caml_attrs = (md: MarkdownIt, opts: CamlOptions): void => {
       // 'wikiattr_val' tokens (see attrbox) and resolved by wikirefs, so this renderer
       // only ever sees the standalone case. See caml-wikiref-handoff.
       // convert newlines to <br> for proper HTML rendering of multi-line values
-      // classes via the composer: structure + value type, NO raw key (the key's
-      // class lives on the dt); the structural token stays overridable
-      const typeCls: string = CAML.attrCssClasses(valType as string)[1];
+      // value classes assembled here: structural token (cssNames.attr, overridable)
+      // + value type, NO raw key (the key's class lives on the dt). a wiki value
+      // renders as a 'string' span -- caml never resolves wikirefs (see above).
+      const typeCls: string = (valType === 'wiki') ? 'string' : (valType as string);
       const displayValue: string = strValue ? strValue.replace(/\n/g, '<br>') : '';
       const rendered: string = `<span class="${opts.cssNames.attr} ${typeCls}">${displayValue}</span>`;
       return `<dd>${rendered}</dd>\n`;
