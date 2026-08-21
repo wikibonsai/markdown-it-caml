@@ -67,8 +67,12 @@ CSS classnames may be overridden here.
 
 #### `cssNames.attr`
 
-Classname for wikiattrs. Default is `attr`.
+Classname for attrs. Default is `attr`.
 
 #### `cssNames.attrbox`
 
-Classname for the wikiattr attrbox. Default is `attrbox`.
+Classname for the attrbox. Default is `attrbox`.
+
+#### `cssNames.key`
+
+Classname prefix for attr keys. Default is `key__`.
