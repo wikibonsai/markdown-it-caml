@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-caml",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Add caml (semantic) attribute syntax for markdown-it.",
   "license": "GPL-3.0",
   "author": {
